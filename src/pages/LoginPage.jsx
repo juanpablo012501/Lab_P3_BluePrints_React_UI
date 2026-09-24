@@ -13,8 +13,16 @@ export default function LoginPage() {
     e.preventDefault()
     setError(null)
     try {
-      const { data } = await api.post('/auth/login', { username, password })
-      const token = data.access_token || data.token
+      let token
+      if (import.meta.env.VITE_USE_MOCK === 'true') {
+        if (username !== 'student' || password !== 'student123') {
+          throw new Error('Invalid mock credentials')
+        }
+        token = 'mock-token'
+      } else {
+        const { data } = await api.post('/auth/login', { username, password })
+        token = data.access_token || data.token
+      }
       if (!token) throw new Error('The login response did not include a token')
       localStorage.setItem('token', token)
       navigate(location.state?.from?.pathname || '/')

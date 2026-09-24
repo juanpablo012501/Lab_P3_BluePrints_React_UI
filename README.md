@@ -6,8 +6,17 @@ cuando hacemos click en nuevo sin estar autenticados se nos redirige automaticam
 si intentamos usar la busqueda de planos sin estar autenticados nos sale error 401
 ![sinautorizar](src\img\unauthorized.png)
 
+una vez autenticado podemos buscar planos 
+![busqueda](src\img\search.png)
 
+tambien podemos crear un canvas desde el front
+![creacion](src\img\creacion.png)
 
+y luego desde blueprints podemos borrar la creacion
+![borrar](src\img\borrar.png)
+
+podemos posteriormente editar la figura dando click en el canvas
+![editar](src\img\editar.png)
 
 # Lab – React Client for Blueprints (Redux + Axios + JWT)
 
