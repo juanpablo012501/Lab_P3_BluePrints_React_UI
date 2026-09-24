@@ -48,14 +48,38 @@ Configura la URL base en `.env`.
 
 ## Cómo arrancar
 
+### Opción 1: frontend y backend por separado
+
+Backend:
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+Frontend, desde la raíz del repositorio:
+
 ```bash
 npm install
 cp .env.example .env
-# edita .env con la URL del backend
 npm run dev
 ```
 
 Abre `http://localhost:5173`
+
+El backend requiere PostgreSQL disponible en `localhost:5432`, con la base
+`blueprints`, usuario `jp` y contraseña `secret`.
+
+### Opción 2: ejecutar todo con Docker Compose
+
+Desde la raíz del repositorio:
+
+```bash
+docker compose up --build
+```
+
+Esto inicia PostgreSQL, el backend en `http://localhost:8080` y el frontend en
+`http://localhost:5173`.
 
 ## Variables de entorno
 
@@ -79,6 +103,10 @@ blueprints-react-lab/
 │  ├─ store/index.js          # Redux Toolkit
 │  ├─ App.jsx, main.jsx, styles.css
 ├─ tests/
+├─ backend/                 # API Spring Boot + seguridad JWT
+│  ├─ src/
+│  ├─ pom.xml
+│  └─ Dockerfile
 ├─ .github/workflows/ci.yml
 ├─ index.html, package.json, vite.config.js, README.md
 ```
