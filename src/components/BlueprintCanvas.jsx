@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react'
 
-export default function BlueprintCanvas({ points = [], width = 520, height = 360 }) {
+export default function BlueprintCanvas({
+  points = [],
+  width = 520,
+  height = 360,
+  onPointsChange,
+  editable = false,
+}) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -43,9 +49,20 @@ export default function BlueprintCanvas({ points = [], width = 520, height = 360
     }
   }, [points])
 
+  const addPoint = (event) => {
+    if (!editable || !onPointsChange) return
+    const rect = event.currentTarget.getBoundingClientRect()
+    onPointsChange([
+      ...points,
+      { x: Math.round((event.clientX - rect.left) * (width / rect.width)), y: Math.round((event.clientY - rect.top) * (height / rect.height)) },
+    ])
+  }
+
   return (
     <canvas
       ref={ref}
+      onClick={addPoint}
+      aria-label={editable ? 'Blueprint canvas, click to add a point' : 'Blueprint canvas'}
       width={width}
       height={height}
       style={{

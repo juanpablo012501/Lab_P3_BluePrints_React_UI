@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../services/httpClient.js'
 
 export default function LoginPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -11,9 +14,11 @@ export default function LoginPage() {
     setError(null)
     try {
       const { data } = await api.post('/auth/login', { username, password })
-      localStorage.setItem('token', data.token)
-      alert('Login exitoso')
-    } catch (e) {
+      const token = data.access_token || data.token
+      if (!token) throw new Error('The login response did not include a token')
+      localStorage.setItem('token', token)
+      navigate(location.state?.from?.pathname || '/')
+    } catch {
       setError('Credenciales inválidas o servidor no disponible')
     }
   }

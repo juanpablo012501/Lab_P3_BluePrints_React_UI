@@ -4,19 +4,23 @@ import {
   fetchAuthors,
   fetchByAuthor,
   fetchBlueprint,
+  updateBlueprint,
+  deleteBlueprint,
 } from '../features/blueprints/blueprintsSlice.js'
 import BlueprintCanvas from '../components/BlueprintCanvas.jsx'
 
 export default function BlueprintsPage() {
   const dispatch = useDispatch()
-  const { byAuthor, current, status } = useSelector((s) => s.blueprints)
+  const { byAuthor, current, status = {}, errors = {} } = useSelector((s) => s.blueprints)
   const [authorInput, setAuthorInput] = useState('')
   const [selectedAuthor, setSelectedAuthor] = useState('')
+  const [draftPoints, setDraftPoints] = useState([])
   const items = byAuthor[selectedAuthor] || []
 
   useEffect(() => {
     dispatch(fetchAuthors())
   }, [dispatch])
+  useEffect(() => setDraftPoints(current?.points || []), [current])
 
   const totalPoints = useMemo(
     () => items.reduce((acc, bp) => acc + (bp.points?.length || 0), 0),
@@ -28,6 +32,7 @@ export default function BlueprintsPage() {
     setSelectedAuthor(authorInput)
     dispatch(fetchByAuthor(authorInput))
   }
+  const retry = () => (selectedAuthor ? dispatch(fetchByAuthor(selectedAuthor)) : dispatch(fetchAuthors()))
 
   const openBlueprint = (bp) => {
     dispatch(fetchBlueprint({ author: bp.author, name: bp.name }))
@@ -49,14 +54,24 @@ export default function BlueprintsPage() {
               Get blueprints
             </button>
           </div>
+          {errors.fetchAuthors && (
+            <div role="alert" className="error-banner">
+              {errors.fetchAuthors} <button className="btn" onClick={() => dispatch(fetchAuthors())}>Retry</button>
+            </div>
+          )}
         </div>
 
         <div className="card">
           <h3 style={{ marginTop: 0 }}>
             {selectedAuthor ? `${selectedAuthor}'s blueprints:` : 'Results'}
           </h3>
-          {status === 'loading' && <p>Cargando...</p>}
-          {!items.length && status !== 'loading' && <p>Sin resultados.</p>}
+          {status.fetchByAuthor === 'loading' && <p>Cargando...</p>}
+          {errors.fetchByAuthor && (
+            <div role="alert" className="error-banner">
+              {errors.fetchByAuthor} <button className="btn" onClick={retry}>Retry</button>
+            </div>
+          )}
+          {!items.length && status.fetchByAuthor !== 'loading' && <p>Sin resultados.</p>}
           {!!items.length && (
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -115,7 +130,22 @@ export default function BlueprintsPage() {
 
       <section className="card">
         <h3 style={{ marginTop: 0 }}>Current blueprint: {current?.name || '—'}</h3>
-        <BlueprintCanvas points={current?.points || []} />
+        {errors.fetchBlueprint && (
+          <div role="alert" className="error-banner">
+            {errors.fetchBlueprint} <button className="btn" onClick={() => current && openBlueprint(current)}>Retry</button>
+          </div>
+        )}
+        <BlueprintCanvas points={draftPoints} editable={Boolean(current)} onPointsChange={setDraftPoints} />
+        {current && (
+          <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+            <button className="btn primary" onClick={() => dispatch(updateBlueprint({ ...current, points: draftPoints }))}>
+              Save
+            </button>
+            <button className="btn" onClick={() => dispatch(deleteBlueprint(current))}>Delete</button>
+          </div>
+        )}
+        {status.updateBlueprint === 'loading' && <p>Saving...</p>}
+        {errors.updateBlueprint && <div role="alert" className="error-banner">{errors.updateBlueprint}</div>}
       </section>
     </div>
   )

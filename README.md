@@ -1,3 +1,14 @@
+# evidencias desarrollo laboratorio
+
+cuando hacemos click en nuevo sin estar autenticados se nos redirige automaticamente a la pagina de login 
+![login](src\img\login.png)
+
+si intentamos usar la busqueda de planos sin estar autenticados nos sale error 401
+![sinautorizar](src\img\unauthorized.png)
+
+
+
+
 # Lab – React Client for Blueprints (Redux + Axios + JWT)
 
 > Basado en el cliente HTML/JS del repo de referencia, este laboratorio moderniza el _frontend_ con **React + Vite**, **Redux Toolkit**, **Axios** (con interceptores y JWT), **React Router** y pruebas con **Vitest + Testing Library**.
@@ -22,7 +33,7 @@ Ver la especificación de glosario clave, consulta las [Definiciones del laborat
 - `GET /api/blueprints/{author}`
 - `GET /api/blueprints/{author}/{name}`
 - `POST /api/blueprints` (requiere JWT)
-- `POST /api/auth/login` → `{ token }`
+- `POST /auth/login` → `{ access_token, token_type, expires_in }`
 
 Configura la URL base en `.env`.
 
@@ -42,7 +53,7 @@ Abre `http://localhost:5173`
 Crea un archivo `.env` en la raíz:
 
 ```variable
-VITE_API_BASE_URL=http://localhost:8080/api
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 > **Tip:** en producción usa variables seguras o un _reverse proxy_.

@@ -45,6 +45,19 @@ const apimock = {
     blueprints.push(clone(blueprint))
     return clone(blueprint)
   },
+  update: async (blueprint) => {
+    const index = blueprints.findIndex(
+      (bp) => bp.author === blueprint.author && bp.name === blueprint.name,
+    )
+    if (index < 0) throw new Error('Blueprint not found')
+    blueprints[index] = clone(blueprint)
+    return clone(blueprint)
+  },
+  remove: async (author, name) => {
+    const index = blueprints.findIndex((bp) => bp.author === author && bp.name === name)
+    if (index < 0) throw new Error('Blueprint not found')
+    blueprints.splice(index, 1)
+  },
 }
 
 export default apimock
